@@ -1,4 +1,6 @@
 import React from 'react';
+import Caracteristica from './Caracteristica';
+import Imagens from './Imagens';
 
 export default class Form extends React.Component {
   constructor(props) {
@@ -7,71 +9,84 @@ export default class Form extends React.Component {
       nome: '',
       preco: '',
       descricao: '',
-      imagens: '',
       categoria: '',
       avaliacao: '',
-      qtdEstoque: ''
+      qtdEstoque: '',
+      caracteristicas: [{ caracteristica: '', valor: '' }],
+      imagens: [{ imagem: '', link: '' }]
     };
   }
 
-  handleNomeChange = event => {
-    this.setState({ nome: event.target.value });
+  handleAdicionarCaracteristica = () => {
+    let arrai = [...this.state.caracteristicas];
+    arrai.push({ caracteristica: '', valor: '' });
+
+    this.setState({ caracteristicas: arrai });
   };
 
-  handlePrecoChange = event => {
-    this.setState({ preco: event.target.value });
+  handleCaracteristicaChange = (e, i) => {
+    let arrai = [...this.state.caracteristicas];
+    arrai[i].caracteristica = e.target.value;
+    this.setState({ caracteristicas: arrai });
   };
 
-  handleDescricaoChange = event => {
-    this.setState({ descricao: event.target.value });
+  handleAdicionarImagem = () => {
+    let arrai = [...this.state.imagens];
+    arrai.push({ imagem: '', link: '' });
+
+    this.setState({ imagens: arrai });
   };
 
-  handleImagensChange = event => {
-    this.setState({ imagens: event.target.value });
+  handleImagemChange = (e, i) => {
+    let arrai = [...this.state.imagens];
+    arrai[i].imagem = e.target.value;
+    this.setState({ imagens: arrai });
   };
 
-  handleCategoriaChange = event => {
-    this.setState({ categoria: event.target.value });
+  handleLinkChange = (e, i) => {
+    let arrai = [...this.state.imagens];
+    arrai[i].link = e.target.value;
+    this.setState({ imagens: arrai });
   };
 
-  handleAvaliacaoChange = event => {
-    this.setState({ avaliacao: event.target.value });
+  handleValorChange = (e, i) => {
+    let arrai = [...this.state.caracteristicas];
+    arrai[i].valor = e.target.value;
+    this.setState({ caracteristicas: arrai });
   };
 
-  handleQtdEstoqueChange = event => {
-    this.setState({ qtdEstoque: event.target.value });
+  handleChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   handleSubmit = event => {
-    alert(
-      'nome: ' +
-        this.state.nome +
-        '      |||    idade: ' +
-        this.state.preco +
-        '         ||||         Descricao: ' +
-        this.state.descricao +
-        'imagem: ' +
-        this.state.imagens +
-        'categoria: ' +
-        this.state.categoria +
-        'avaliacao: ' +
-        this.state.avaliacao +
-        'qtdEstoque: ' +
-        this.state.qtdEstoque +
-        'testando caracteristicas: '
-    );
+    const { caracteristicas } = this.state;
+    const { imagens } = this.state;
+    console.log(caracteristicas);
+    console.log(imagens);
+
+    alert('nome:' + this.state.nome);
+    alert('preço:' + this.state.preco);
+    alert('descricao: ' + this.state.descricao);
+    alert('categoria: ' + this.state.categoria);
+    alert('avalição : ' + this.state.avaliacao);
+    alert('qtd: ' + this.state.qtdEstoque);
+
     event.preventDefault();
   };
 
   render() {
+    const { caracteristicas } = this.state;
+    const { imagens } = this.state;
     return (
       <form onSubmit={this.handleSubmit}>
         <label>
           Nome:
           <input
-            type='text'
+            type="text"
+            name="nome"
             value={this.state.nome}
-            onChange={this.handleNomeChange}
+            onChange={this.handleChange}
             required
           />
         </label>
@@ -79,9 +94,10 @@ export default class Form extends React.Component {
         <label>
           Preco:
           <input
-            type='number'
+            type="number"
+            name="preco"
             value={this.state.preco}
-            onChange={this.handlePrecoChange}
+            onChange={this.handleChange}
             required
           />
         </label>
@@ -90,35 +106,59 @@ export default class Form extends React.Component {
         <label>
           Descrição:
           <input
-            type='Text'
+            type="Text"
+            name="descricao"
             value={this.state.descricao}
-            onChange={this.handleDescricaoChange}
+            onChange={this.handleChange}
             required
           />
         </label>
         <br />
-
         <label>
-          <Caracteristicas />
-          <NovaCaracteristica />
+          <div>
+            {caracteristicas.map((carac, i) => (
+              <Caracteristica
+                caracteristica={carac.caracteristica}
+                key={i}
+                valor={carac.valor}
+                handleCaracteristicaChange={e =>
+                  this.handleCaracteristicaChange(e, i)
+                }
+                handleValorChange={e => this.handleValorChange(e, i)}
+              />
+            ))}
+
+            <button type="button" onClick={this.handleAdicionarCaracteristica}>
+              Adicionar caracteristicas
+            </button>
+          </div>
         </label>
         <label>
-          Imagens:
-          <input
-            type='Text'
-            value={this.state.imagens}
-            onChange={this.handleImagensChange}
-            required
-          />
+          <div>
+            {imagens.map((img, i) => (
+              <Imagens
+                imagem={img.imagem}
+                link={img.link}
+                key={i}
+                handleImagemChange={e => this.handleImagemChange(e, i)}
+                handleLinkChange={e => this.handleLinkChange(e, i)}
+              />
+            ))}
+
+            <button type="button" onClick={this.handleAdicionarImagem}>
+              Adicionar imagens
+            </button>
+          </div>
         </label>
         <br />
 
         <label>
           Categoria:
           <input
-            type='Text'
+            type="Text"
+            name="categoria"
             value={this.state.categoria}
-            onChange={this.handleCategoriaChange}
+            onChange={this.handleChange}
             required
           />
         </label>
@@ -127,9 +167,10 @@ export default class Form extends React.Component {
         <label>
           Avaliação:
           <input
-            type='Text'
+            type="Text"
+            name="avaliacao"
             value={this.state.avaliacao}
-            onChange={this.handleAvaliacaoChange}
+            onChange={this.handleChange}
             required
           />
         </label>
@@ -138,86 +179,16 @@ export default class Form extends React.Component {
         <label>
           QtdEstoque:
           <input
-            type='number'
+            type="number"
+            name="qtdEstoque"
             value={this.state.qtdEstoque}
-            onChange={this.handleQtdEstoqueChange}
+            onChange={this.handleChange}
             required
           />
         </label>
         <br />
-        <input type='submit' value='Cadastrar' />
+        <input type="submit" value="Cadastrar" />
       </form>
-    );
-  }
-}
-
-class Caracteristicas extends React.Component {
-  state = {
-    caracteristica: '',
-    valor: ''
-  };
-
-  handleCaracteristicaChange = e => {
-    this.setState({ caracteristica: e.target.value });
-  };
-
-  handleValorChange = e => {
-    this.setState({ valor: e.target.value });
-  };
-
-  render() {
-    console.log(this.state);
-
-    return (
-      <div>
-        <label>
-          Caracteristica:
-          <input
-            type='text'
-            onChange={this.handleCaracteristicaChange}
-            value={this.state.caracteristica}
-            required
-          />
-          Valor:{' '}
-          <input
-            value={this.state.valor}
-            onChange={this.handleValorChange}
-            type='text'
-            required
-          />
-        </label>
-      </div>
-    );
-  }
-}
-
-class NovaCaracteristica extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { caracteristicas: [] };
-  }
-
-  handleAdicionarCaracteristica = () => {
-    let caracteristicas = this.state.caracteristicas;
-    caracteristicas.push({ Carac: '' });
-
-    this.setState({
-      caracteristicas: caracteristicas
-    });
-  };
-
-  render() {
-    const caracteristicas = this.state.caracteristicas.map((r, i) => (
-      <Caracteristicas key={i} />
-    ));
-    return (
-      <div>
-        {caracteristicas}
-
-        <button type='button' onClick={this.handleAdicionarCaracteristica}>
-          Adicionar caracteristicas
-        </button>
-      </div>
     );
   }
 }
