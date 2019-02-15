@@ -6,18 +6,18 @@ const Imagens = props => {
       <label>
         Imagem:
         <input
-          type="text"
+          type='text'
           value={props.imagens}
           onChange={props.handleImagemChange}
           required
         />
-        Link:
+        {/* Imagem link:
         <input
-          type="text"
+          type='text'
           value={props.link}
           onChange={props.handleLinkChange}
           required
-        />
+        /> */}
       </label>
     </div>
   );

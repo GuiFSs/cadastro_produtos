@@ -2,6 +2,8 @@ import React from 'react';
 import Caracteristica from './Caracteristica';
 import Imagens from './Imagens';
 
+import axios from 'axios';
+
 export default class Form extends React.Component {
   constructor(props) {
     super(props);
@@ -13,7 +15,7 @@ export default class Form extends React.Component {
       avaliacao: '',
       qtdEstoque: '',
       caracteristicas: [{ caracteristica: '', valor: '' }],
-      imagens: [{ imagem: '', link: '' }]
+      imagens: ['']
     };
   }
 
@@ -32,20 +34,13 @@ export default class Form extends React.Component {
 
   handleAdicionarImagem = () => {
     let arrai = [...this.state.imagens];
-    arrai.push({ imagem: '', link: '' });
-
+    arrai.push('');
     this.setState({ imagens: arrai });
   };
 
   handleImagemChange = (e, i) => {
     let arrai = [...this.state.imagens];
-    arrai[i].imagem = e.target.value;
-    this.setState({ imagens: arrai });
-  };
-
-  handleLinkChange = (e, i) => {
-    let arrai = [...this.state.imagens];
-    arrai[i].link = e.target.value;
+    arrai[i] = e.target.value;
     this.setState({ imagens: arrai });
   };
 
@@ -59,32 +54,31 @@ export default class Form extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  handleSubmit = event => {
-    const { caracteristicas } = this.state;
-    const { imagens } = this.state;
-    console.log(caracteristicas);
-    console.log(imagens);
-
-    alert('nome:' + this.state.nome);
-    alert('preço:' + this.state.preco);
-    alert('descricao: ' + this.state.descricao);
-    alert('categoria: ' + this.state.categoria);
-    alert('avalição : ' + this.state.avaliacao);
-    alert('qtd: ' + this.state.qtdEstoque);
-
+  handleSubmit = async event => {
     event.preventDefault();
+    const produto = { ...this.state };
+    produto.preco = parseFloat(produto.preco);
+    produto.avaliacao = parseInt(produto.avaliacao);
+    produto.qtdEstoque = parseInt(produto.qtdEstoque);
+    const baseUrl = 'http://localhost:3003/api';
+
+    try {
+      const res = await axios.post(`${baseUrl}/produto`, produto);
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   render() {
-    const { caracteristicas } = this.state;
-    const { imagens } = this.state;
+    const { caracteristicas, imagens } = this.state;
     return (
       <form onSubmit={this.handleSubmit}>
         <label>
           Nome:
           <input
-            type="text"
-            name="nome"
+            type='text'
+            name='nome'
             value={this.state.nome}
             onChange={this.handleChange}
             required
@@ -94,8 +88,8 @@ export default class Form extends React.Component {
         <label>
           Preco:
           <input
-            type="number"
-            name="preco"
+            type='number'
+            name='preco'
             value={this.state.preco}
             onChange={this.handleChange}
             required
@@ -106,8 +100,8 @@ export default class Form extends React.Component {
         <label>
           Descrição:
           <input
-            type="Text"
-            name="descricao"
+            type='Text'
+            name='descricao'
             value={this.state.descricao}
             onChange={this.handleChange}
             required
@@ -128,7 +122,7 @@ export default class Form extends React.Component {
               />
             ))}
 
-            <button type="button" onClick={this.handleAdicionarCaracteristica}>
+            <button type='button' onClick={this.handleAdicionarCaracteristica}>
               Adicionar caracteristicas
             </button>
           </div>
@@ -137,15 +131,13 @@ export default class Form extends React.Component {
           <div>
             {imagens.map((img, i) => (
               <Imagens
-                imagem={img.imagem}
-                link={img.link}
+                link={img}
                 key={i}
                 handleImagemChange={e => this.handleImagemChange(e, i)}
-                handleLinkChange={e => this.handleLinkChange(e, i)}
               />
             ))}
 
-            <button type="button" onClick={this.handleAdicionarImagem}>
+            <button type='button' onClick={this.handleAdicionarImagem}>
               Adicionar imagens
             </button>
           </div>
@@ -155,8 +147,8 @@ export default class Form extends React.Component {
         <label>
           Categoria:
           <input
-            type="Text"
-            name="categoria"
+            type='Text'
+            name='categoria'
             value={this.state.categoria}
             onChange={this.handleChange}
             required
@@ -167,8 +159,10 @@ export default class Form extends React.Component {
         <label>
           Avaliação:
           <input
-            type="Text"
-            name="avaliacao"
+            type='number'
+            min={0}
+            max={5}
+            name='avaliacao'
             value={this.state.avaliacao}
             onChange={this.handleChange}
             required
@@ -179,15 +173,15 @@ export default class Form extends React.Component {
         <label>
           QtdEstoque:
           <input
-            type="number"
-            name="qtdEstoque"
+            type='number'
+            name='qtdEstoque'
             value={this.state.qtdEstoque}
             onChange={this.handleChange}
             required
           />
         </label>
         <br />
-        <input type="submit" value="Cadastrar" />
+        <input type='submit' value='Cadastrar' />
       </form>
     );
   }
